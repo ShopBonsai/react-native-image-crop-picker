@@ -710,6 +710,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 
     NSLog(@"id: %@ filename: %@", localIdentifier, filename);
 
+    ImageResult *imageResult = [self.compression compressImage:[image fixOrientation]  withOptions:self.options];
     if ([[[self options] objectForKey:@"cropping"] boolValue]) {
         self.croppingFile = [[NSMutableDictionary alloc] init];
         self.croppingFile[@"sourceURL"] = sourceURL;
@@ -719,9 +720,9 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         self.croppingFile[@"modifcationDate"] = modificationDate;
         NSLog(@"CroppingFile %@", self.croppingFile);
 
-        [self startCropping:[image fixOrientation]];
+        UIImage *imgT = [UIImage imageWithData:imageResult.data];
+        [self startCropping:[imgT fixOrientation]];
     } else {
-        ImageResult *imageResult = [self.compression compressImage:[image fixOrientation]  withOptions:self.options];
         NSString *filePath = [self persistFile:imageResult.data];
         if (filePath == nil) {
             [viewController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
